@@ -137,7 +137,8 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         try {
           const result = await onDateChange(
             newChangedTask,
-            newChangedTask.barChildren
+            newChangedTask.barChildren,
+            action
           );
           if (result !== undefined) {
             operationSuccess = result;

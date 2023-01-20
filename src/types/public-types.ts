@@ -30,6 +30,7 @@ export interface Task {
   dependencies?: string[];
   hideChildren?: boolean;
   displayOrder?: number;
+  metadata?: { [key: string]: any };
 }
 
 export interface EventOption {
@@ -54,7 +55,8 @@ export interface EventOption {
    */
   onDateChange?: (
     task: Task,
-    children: Task[]
+    children: Task[],
+    type: "start" | "end" | "move"
   ) => void | boolean | Promise<void> | Promise<boolean>;
   /**
    * Invokes on progress change. Chart undoes operation if method return false or error.
