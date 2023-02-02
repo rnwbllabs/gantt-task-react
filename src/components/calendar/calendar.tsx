@@ -1,14 +1,10 @@
 import React, { ReactChild } from "react";
 import { ViewMode } from "../../types/public-types";
 import { TopPartOfCalendar } from "./top-part-of-calendar";
-import {
-  getDaysInMonth,
-  getLocalDayOfWeek,
-  getLocaleMonth,
-  getWeekNumberISO8601,
-} from "../../helpers/date-helper";
+import { getDaysInMonth, getLocalDayOfWeek } from "../../helpers/date-helper";
 import { DateSetup } from "../../types/date-setup";
 import styles from "./calendar.module.css";
+import moment from "moment";
 
 export type CalendarProps = {
   dateSetup: DateSetup;
@@ -30,11 +26,13 @@ export const CalendarRaw: React.FC<CalendarProps> = ({
   fontFamily,
   fontSize,
 }) => {
+  const topDefaultHeight = headerHeight * 0.4;
+  const bottomValueYStart = headerHeight * 0.8;
+
   const getCalendarValuesForYear = () => {
     const topValues: ReactChild[] = [];
     const bottomValues: ReactChild[] = [];
-    const topDefaultHeight = headerHeight * 0.5;
-    const bottomValueYStart = headerHeight * 0.8;
+
     for (let i = 0; i < dateSetup.dates.length; i++) {
       const date = dateSetup.dates[i];
       const bottomValue = date.getFullYear();
@@ -75,21 +73,21 @@ export const CalendarRaw: React.FC<CalendarProps> = ({
   const getCalendarValuesForMonth = () => {
     const topValues: ReactChild[] = [];
     const bottomValues: ReactChild[] = [];
-    const bottomValueYStart = headerHeight * 0.8;
 
     for (let i = 0; i < dateSetup.dates.length; i++) {
       const date = dateSetup.dates[i];
       const dateFullYear = date.getFullYear();
-      const bottomValue = getLocaleMonth(date, locale);
+      const bottomValue = moment(date).format("MMM");
       bottomValues.push(
-        <text
+        <TopPartOfCalendar
           key={bottomValue + dateFullYear}
-          y={bottomValueYStart}
-          x={columnWidth * i + columnWidth * 0.5}
-          className={styles.calendarBottomText}
-        >
-          {`${bottomValue}, ${dateFullYear}`}
-        </text>
+          value={`${bottomValue}, ${dateFullYear}`}
+          x1Line={columnWidth * i}
+          y1Line={0}
+          y2Line={headerHeight}
+          xText={columnWidth * i + columnWidth * 0.5}
+          yText={headerHeight * 0.6}
+        />
       );
     }
     return [topValues, bottomValues];
@@ -99,43 +97,52 @@ export const CalendarRaw: React.FC<CalendarProps> = ({
     const topValues: ReactChild[] = [];
     const bottomValues: ReactChild[] = [];
     let weeksCount: number = 1;
-    const topDefaultHeight = headerHeight * 0.5;
-    const bottomValueYStart = headerHeight * 0.8;
 
     const dates = dateSetup.dates;
-    for (let i = dates.length - 1; i >= 0; i--) {
-      const date = dates[i];
-      let topValue = "";
-      if (i === 0 || date.getMonth() !== dates[i - 1].getMonth()) {
-        // top
-        topValue = `${getLocaleMonth(date, locale)}, ${date.getFullYear()}`;
-      }
-      // bottom
-      const bottomValue = `W${getWeekNumberISO8601(date)}`;
 
-      bottomValues.push(
-        <text
-          key={date.getTime()}
-          y={bottomValueYStart}
-          x={columnWidth * (i + +rtl)}
-          className={styles.calendarBottomText}
-        >
-          {bottomValue}
-        </text>
-      );
+    for (let i = dates.length - 1; i >= 0; i--) {
+      const date = moment(dates[i]);
+      let topValue = "";
+
+      topValue = `${date.format("MMM")}, ${date.format("YY")}`;
+
+      const daysInWeek: number[] = [];
+
+      for (let day = 0; day < 7; day++) {
+        daysInWeek.push(moment(date).add("day", day).date());
+      }
+
+      const weekFragment = columnWidth / 7;
+      daysInWeek.forEach((weekDay, index) => {
+        bottomValues.push(
+          <text
+            key={`${date.toDate().getTime()} ${index}`}
+            y={bottomValueYStart}
+            x={
+              columnWidth * i +
+              +rtl +
+              weekFragment * (index + 1) -
+              weekFragment * 0.5
+            }
+            className={styles.calendarBottomText}
+          >
+            {weekDay}
+          </text>
+        );
+      });
 
       if (topValue) {
         // if last day is new month
         if (i !== dates.length - 1) {
           topValues.push(
             <TopPartOfCalendar
-              key={topValue}
+              key={`${date.toDate().getTime()} ${topValue}`}
               value={topValue}
               x1Line={columnWidth * i + weeksCount * columnWidth}
               y1Line={0}
-              y2Line={topDefaultHeight}
+              y2Line={headerHeight}
               xText={columnWidth * i + columnWidth * weeksCount * 0.5}
-              yText={topDefaultHeight * 0.9}
+              yText={topDefaultHeight}
             />
           );
         }
@@ -149,8 +156,6 @@ export const CalendarRaw: React.FC<CalendarProps> = ({
   const getCalendarValuesForDay = () => {
     const topValues: ReactChild[] = [];
     const bottomValues: ReactChild[] = [];
-    const topDefaultHeight = headerHeight * 0.5;
-    const bottomValueYStart = headerHeight * 0.8;
 
     const dates = dateSetup.dates;
     for (let i = 0; i < dates.length; i++) {
@@ -174,7 +179,7 @@ export const CalendarRaw: React.FC<CalendarProps> = ({
         date.getMonth() !== dates[i + 1].getMonth()
       ) {
         const dateFullYear = date.getFullYear();
-        const topValue = `${getLocaleMonth(date, locale)}, ${dateFullYear}`;
+        const topValue = `${moment(date).format("MMM")}, ${dateFullYear}`;
 
         topValues.push(
           <TopPartOfCalendar
