@@ -383,7 +383,6 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     dates: dateSetup.dates,
     todayColor,
     rtl,
-    onClick,
   };
   const calendarProps: CalendarProps = {
     dateSetup,
