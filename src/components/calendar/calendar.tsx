@@ -104,8 +104,6 @@ export const CalendarRaw: React.FC<CalendarProps> = ({
       const date = moment(dates[i]);
       let topValue = "";
 
-      topValue = `${date.format("MMM")}, ${date.format("YY")}`;
-
       const daysInWeek: number[] = [];
 
       for (let day = 0; day < 7; day++) {
@@ -130,6 +128,22 @@ export const CalendarRaw: React.FC<CalendarProps> = ({
           </text>
         );
       });
+
+      if (daysInWeek[0] > daysInWeek[6]) {
+        const nextMont = moment(date).add("month", 1);
+
+        if (date.year() === nextMont.year()) {
+          topValue = `${date.format("MMM")} - ${nextMont.format(
+            "MMM"
+          )}, ${date.format("YY")}`;
+        } else {
+          topValue = `${date.format("MMM")}, ${date.format(
+            "YY"
+          )} - ${nextMont.format("MMM")}, ${nextMont.format("YY")}`;
+        }
+      } else {
+        topValue = `${date.format("MMM")}, ${date.format("YY")}`;
+      }
 
       if (topValue) {
         // if last day is new month
