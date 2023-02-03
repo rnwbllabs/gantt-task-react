@@ -55,7 +55,7 @@ const App = () => {
   };
 
   const handleClick = (task: Task) => {
-    console.log("On Click event Id:" + task.id);
+    console.log(task);
   };
 
   const handleSelect = (task: Task, isSelected: boolean) => {

@@ -4,7 +4,6 @@ import { GanttContentMoveAction } from "../../types/gantt-task-actions";
 import { Bar } from "./bar/bar";
 import { BarSmall } from "./bar/bar-small";
 import { Milestone } from "./milestone/milestone";
-import { Project } from "./project/project";
 
 export type TaskItemProps = {
   task: BarTask;
@@ -40,7 +39,9 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
         setTaskItem(<Milestone {...props} />);
         break;
       case "project":
-        setTaskItem(<Project {...props} />);
+        setTaskItem(
+          <Bar {...props} task={currTask} setCurrTask={setCurrTask} />
+        );
         break;
       case "smalltask":
         setTaskItem(<BarSmall {...props} />);

@@ -11,6 +11,7 @@ export type GridBodyProps = {
   columnWidth: number;
   todayColor: string;
   rtl: boolean;
+  onClick?: (task: Task) => void;
 };
 export const GridBody: React.FC<GridBodyProps> = ({
   tasks,
@@ -20,6 +21,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
   columnWidth,
   todayColor,
   rtl,
+  onClick,
 }) => {
   let y = 0;
   const gridRows: ReactChild[] = [];
@@ -42,6 +44,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
         width={svgWidth}
         height={rowHeight}
         className={styles.gridRow}
+        onClick={() => onClick?.(task)}
       />
     );
     rowLines.push(
