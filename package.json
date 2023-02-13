@@ -11,7 +11,7 @@
     "node": ">=10"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@rnwbllabs"
+    "registry": "https://npm.pkg.github.com/"
   },
   "keywords": [
     "react",
