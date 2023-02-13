@@ -196,7 +196,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   ]);
 
   useEffect(() => {
-    const { changedTask, action } = ganttEvent;
+    const { changedTask, action, setCurrTask } = ganttEvent;
     if (changedTask) {
       if (action === "delete") {
         setGanttEvent({ action: "" });
@@ -207,19 +207,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         action === "start" ||
         action === "progress"
       ) {
-        const prevStateTask = barTasks.find(t => t.id === changedTask.id);
-        if (
-          prevStateTask &&
-          (prevStateTask.start.getTime() !== changedTask.start.getTime() ||
-            prevStateTask.end.getTime() !== changedTask.end.getTime() ||
-            prevStateTask.progress !== changedTask.progress)
-        ) {
-          // actions for change
-          const newTaskList = barTasks.map(t =>
-            t.id === changedTask.id ? changedTask : t
-          );
-          setBarTasks(newTaskList);
-        }
+        setCurrTask?.({ ...changedTask });
       }
     }
   }, [ganttEvent, barTasks]);
@@ -390,7 +378,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   const gridProps: GridProps = {
     columnWidth,
     svgWidth,
-    tasks: tasks,
+    tasks: barTasks,
     rowHeight,
     dates: dateSetup.dates,
     todayColor,

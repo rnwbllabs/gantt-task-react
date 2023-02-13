@@ -92,7 +92,11 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         rtl
       );
       if (isChanged) {
-        setGanttEvent({ action: ganttEvent.action, changedTask });
+        setGanttEvent({
+          action: ganttEvent.action,
+          changedTask,
+          setCurrTask: ganttEvent.setCurrTask,
+        });
       }
     };
 
@@ -137,7 +141,8 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         try {
           const result = await onDateChange(
             newChangedTask,
-            newChangedTask.barChildren
+            newChangedTask.barChildren,
+            action
           );
           if (result !== undefined) {
             operationSuccess = result;
@@ -198,7 +203,8 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   const handleBarEventStart = async (
     action: GanttContentMoveAction,
     task: BarTask,
-    event?: React.MouseEvent | React.KeyboardEvent
+    event?: React.MouseEvent | React.KeyboardEvent,
+    setCurrTask?: React.Dispatch<React.SetStateAction<BarTask>>
   ) => {
     if (!event) {
       if (action === "select") {
@@ -250,12 +256,14 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         action,
         changedTask: task,
         originalSelectedTask: task,
+        setCurrTask,
       });
     } else {
       setGanttEvent({
         action,
         changedTask: task,
         originalSelectedTask: task,
+        setCurrTask,
       });
     }
   };
